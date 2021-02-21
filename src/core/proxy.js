@@ -11,8 +11,14 @@ const requestHandler = async (request, proxy, overrides = {}) => {
     }
     const cookieHandler = new CookieHandler(request);
     // Request options for Got accounting for overrides
+    let jar 
+    try {
+       jar = await cookieHandler.getCookies();
+    } catch (e) {
+        throw(e);
+    }
     const options = {
-        cookieJar: await cookieHandler.getCookies(),
+        cookieJar: jar,
         method: overrides.method || request.method(),
         body: overrides.postData || request.postData(),
         headers: overrides.headers || setHeaders(request),
@@ -21,7 +27,8 @@ const requestHandler = async (request, proxy, overrides = {}) => {
         maxRedirects: 15,
         throwHttpErrors: false,
         ignoreInvalidCookies: true,
-        followRedirect: false
+        followRedirect: false,
+        timeout: 30000,
     };
     try {
         const response = await got(overrides.url || request.url(), options);
@@ -37,8 +44,8 @@ const requestHandler = async (request, proxy, overrides = {}) => {
             headers: response.headers,
             body: response.body
         });
-    } catch (error) {
-        await request.abort();
+    } catch (e) {
+        throw e;
     }
 };
 
