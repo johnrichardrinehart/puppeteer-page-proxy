@@ -30,7 +30,7 @@ const setAgent = (proxy) => {
         };
     }
     return {
-        http: new HttpsProxyAgent({
+        http: new HttpProxyAgent({
             keepAlive: true,
             keepAliveMsecs: 1000,
             maxSockets: 256,
@@ -38,7 +38,7 @@ const setAgent = (proxy) => {
             scheduling: 'lifo',
             proxy: proxy,
         }),
-        https: new HttpProxyAgent({
+        https: new HttpsProxyAgent({
             keepAlive: true,
             keepAliveMsecs: 1000,
             maxSockets: 256,
